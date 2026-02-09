@@ -99,6 +99,59 @@ function App() {
     setPipes(pipesRef.current);
   };
 
+  const gameLoop = () => {
+    if (gameStatus === "playing" && !gameOverRef.current) {
+      // ibon
+      birdYRef.current += timeFlyRef.current ? -5 : 4;
+      if (birdYRef.current < -270) birdYRef.current = -270;
+
+      const currentBirdTop = 270 + birdYRef.current;
+      const currentBirdBottom = currentBirdTop + BIRD_HEIGHT;
+
+      animateWings();
+
+      // animation rotate
+      if (timeFlyRef.current) {
+        setRotation(-25);
+      } else {
+        setRotation((prev) => Math.min(prev + 3, 70));
+      }
+
+      // pipe movement
+      let newPipes = pipesRef.current.map((p) => ({ ...p, x: p.x - 2 }));
+
+      // 'pag nalaglag yung ibon
+      if (currentBirdBottom >= PLAYABLE_HEIGHT) {
+        setRotation(90);
+        gameOverRef.current = true;
+        setGameStatus("gameOver");
+      }
+
+      // score ta's pipe generation, also pipe collision check
+      newPipes.forEach((pipe) => {
+        if (BIRD_X + BIRD_WIDTH > pipe.x && BIRD_X < pipe.x + PIPE_WIDTH) {
+          if (
+            currentBirdTop < pipe.gapStart ||
+            currentBirdBottom > pipe.gapStart + GAP_SIZE
+          ) {
+            gameOverRef.current = true;
+            setGameStatus("gameOver");
+            setRotation(90);
+          }
+        }
+        if (!pipe.passed && pipe.x < BIRD_X) {
+          setScore((prev) => prev + 1);
+          pipe.passed = true;
+          newPipes.push(createNewPipe(400));
+        }
+      });
+
+      pipesRef.current = newPipes.filter((p) => p.x > -100);
+      setPipes(pipesRef.current);
+      setBirdY(birdYRef.current);
+    }
+  }
+
   // mouse and keyboard input
   useEffect(() => {
     const handleInput = (event) => {
@@ -133,64 +186,8 @@ function App() {
 
   // main logic loop
   useEffect(() => {
-    let animId;
-
-    const gameLoop = () => {
-      if (gameStatus === "playing" && !gameOverRef.current) {
-        // ibon
-        birdYRef.current += timeFlyRef.current ? -5 : 4;
-        if (birdYRef.current < -270) birdYRef.current = -270;
-
-        const currentBirdTop = 270 + birdYRef.current;
-        const currentBirdBottom = currentBirdTop + BIRD_HEIGHT;
-
-        animateWings();
-
-        // animation rotate
-        if (timeFlyRef.current) {
-          setRotation(-25);
-        } else {
-          setRotation((prev) => Math.min(prev + 3, 70));
-        }
-
-        // pipe movement
-        let newPipes = pipesRef.current.map((p) => ({ ...p, x: p.x - 2 }));
-
-        // 'pag nalaglag yung ibon
-        if (currentBirdBottom >= PLAYABLE_HEIGHT) {
-          setRotation(90);
-          gameOverRef.current = true;
-          setGameStatus("gameOver");
-        }
-
-        // score ta's pipe generation, also pipe collision check
-        newPipes.forEach((pipe) => {
-          if (BIRD_X + BIRD_WIDTH > pipe.x && BIRD_X < pipe.x + PIPE_WIDTH) {
-            if (
-              currentBirdTop < pipe.gapStart ||
-              currentBirdBottom > pipe.gapStart + GAP_SIZE
-            ) {
-              gameOverRef.current = true;
-              setGameStatus("gameOver");
-              setRotation(90);
-            }
-          }
-          if (!pipe.passed && pipe.x < BIRD_X) {
-            setScore((prev) => prev + 1);
-            pipe.passed = true;
-            newPipes.push(createNewPipe(400));
-          }
-        });
-
-        pipesRef.current = newPipes.filter((p) => p.x > -100);
-        setPipes(pipesRef.current);
-        setBirdY(birdYRef.current);
-      }
-      animId = requestAnimationFrame(gameLoop);
-    };
-
-    animId = requestAnimationFrame(gameLoop);
-    return () => cancelAnimationFrame(animId);
+    let animId = setInterval(gameLoop, 1000 / 60);
+    return () => clearInterval(animId);
   }, [gameStatus]);
 
   // UI
