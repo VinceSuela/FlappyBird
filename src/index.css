@@ -1,13 +1,116 @@
 body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  background: #333;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.App {
+  position: relative;
+  width: 375px;
+  height: 667px;
+  background: url("./asset/sprites/background-day.png");
+  background-size: cover;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.bird {
+  position: absolute;
+  left: 170px;
+  top: 270px;
+  width: 34px;
+  height: 24px;
+  z-index: 30;
+}
+
+.pipe-up,
+.pipe-down {
+  position: absolute;
+  width: 52px;
+  z-index: 20;
+  background-repeat: repeat-y;
+  background-size: 52px auto;
+}
+
+.pipe-up {
+  top: 0;
+  transform: scaleY(-1);
+  background-position: top;
+}
+
+.pipe-down {
+  bottom: 112px;
+  background-position: top;
+}
+
+.game-over {
+  position: absolute;
+  top: 150px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  pointer-events: none;
+
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.game-over img {
+  width: 200px;
+  height: auto;
+}
+
+@keyframes popIn {
+  0% {
+    transform: translateX(-50%) scale(0.5);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+  }
+}
+
+.score-container {
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 2px;
+  z-index: 50;
+  pointer-events: none;
+}
+
+.points img {
+  height: 36px;
+  width: auto;
+}
+
+.start-screen {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 100;
+  pointer-events: none;
+}
+
+.start-screen img {
+  width: 200px;
+  height: auto;
+}
+
+.base {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 112px;
+  background: url("./asset/sprites/base.png");
+  z-index: 40;
 }
