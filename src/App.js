@@ -71,7 +71,7 @@ function App() {
     { digit: "9", image: nine },
   ];
 
-  const animateWings = () => {
+  function animateWings() {
     frameRef.current++;
     if (frameRef.current % 5 === 0) {
       setBirdImage((prev) => {
@@ -80,16 +80,16 @@ function App() {
         return yellowbirdmid;
       });
     }
-  };
+  }
 
-  const createNewPipe = (x = 400) => {
+  function createNewPipe() {
     const minGapTop = 50;
     const maxGapTop = PLAYABLE_HEIGHT - GAP_SIZE - 50;
     const gapStart = Math.random() * (maxGapTop - minGapTop) + minGapTop;
-    return { id: Date.now() + Math.random(), x, gapStart, passed: false };
-  };
+    return { id: Date.now() + Math.random(), x: 400, gapStart, passed: false };
+  }
 
-  const resetGame = () => {
+  function resetGame() {
     setScore(0);
     birdYRef.current = 0;
     setBirdY(0);
@@ -97,9 +97,9 @@ function App() {
     gameOverRef.current = false;
     pipesRef.current = [createNewPipe()];
     setPipes(pipesRef.current);
-  };
+  }
 
-  const gameLoop = () => {
+  function gameLoop() {
     if (gameStatus === "playing" && !gameOverRef.current) {
       // ibon
       birdYRef.current += timeFlyRef.current ? -5 : 4;
@@ -154,7 +154,7 @@ function App() {
 
   // mouse and keyboard input
   useEffect(() => {
-    const handleInput = (event) => {
+    function handleInput(event) {
       if (
         event.type === "mousedown" ||
         (event.type === "keydown" && event.code === "Space")
@@ -174,7 +174,7 @@ function App() {
           }, 150);
         }
       }
-    };
+    }
 
     window.addEventListener("mousedown", handleInput);
     window.addEventListener("keydown", handleInput);
